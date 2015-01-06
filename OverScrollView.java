@@ -115,7 +115,9 @@ public class OverScrollView extends ScrollView {
     }
 
     private void updateBounds() {
-        mHeaderDrawable.setBounds(0, -mMaxOverScrollY, getRight(), 0);
+        if (mHeaderDrawable != null) {
+            mHeaderDrawable.setBounds(0, -mMaxOverScrollY, getRight(), 0);
+        }
     }
 
     @Override
