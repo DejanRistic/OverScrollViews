@@ -33,19 +33,36 @@ OverScrollListView listView;
 OverScrollView scrollView;
 ```
 
-Initialize like any other list/scroll view, the only extra step is to add the offset listener (optional). 
-The example is for the ListView but everything but the adapter can be applied to both.
+Initialize like any other list/scroll view, the following are examples of what they can do.
 
 ```java
-
-// ListView only
-listView.setAdapter(myAwesomeAdapter);
-
-// (applies to both OverScrollView and OverScrollListView)
 listView.setOverScrollOffsetY(200); // default is 150.  
+scrollView.setOverScrollOffsetY(200); // default is 150.  
+```
 
-// set a drawable to be shown in the scroll offset area. (applies to both OverScrollView and OverScrollListView)
+The ScrollView currently supports adding a custom view as the overscroll area. 
+```java
+
+// ScrollView only, allows you to set a custom view for the over scroll area.
+TextView textView = new TextView(this);
+textView.setText("Hello World");
+textView.setTextSize(14);
+textView.setGravity(Gravity.CENTER);
+textView.setBackgroundColor(Color.YELLOW);
+
+scrollView.setOverscrollView(textView);
+```
+
+Both support the ability to add a drawable for the over scroll area.
+
+```java
+// set a drawable to be shown in the scroll offset area. 
 listView.setOverscrollHeader(myDrawable);
+scrollView.setOverscrollHeader(myDrawable);
+```
+
+Both support an OverScrolledListener that will notify you of the scroll offset and such.
+```java
 
 // set the overscroll listener. (applies to both OverScrollView and OverScrollListView)
 listView.setOverScrollListener(new OverScrollListView.OverScrolledListener() {
@@ -75,7 +92,7 @@ public void overScrolled(int scrollY, int maxY, boolean clampedY, boolean didFin
 });
 ```
 
-For the listner just make sure to use OverScrollView.OverScrolledListener if you are using the ScrollView
+Listener is the same for the ScrollView, we just apply the OverScrollView.OverScrolledListener() instead.
 
 ```java
 scrollView.setOverScrollListener(new OverScrollView.OverScrolledListener() {
