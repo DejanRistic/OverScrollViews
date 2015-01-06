@@ -12,7 +12,6 @@ package com.fuzzydev.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.AbsListView;
@@ -79,9 +78,6 @@ public class OverScrollListView extends ListView {
     }
 
     private void init() {
-        final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
-        final float density = metrics.density;
-        mMaxOverScrollY = (int) (density * mMaxOverScrollY);
         setFadingEdgeLength(0);
         setVerticalFadingEdgeEnabled(false);
         getPrivateFieldMembers();
