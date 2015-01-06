@@ -34,6 +34,7 @@ OverScrollView scrollView;
 ```
 
 Initialize like any other list, the only extra step is to add the Offset listener (optional). 
+The example is for the ListView but everything but the adapter can be applied to both.
 
 ```java
 
@@ -47,7 +48,7 @@ listView.setOverScrollOffsetY(200); // default is 150.
 listView.setOverscrollHeader(myDrawable);
 
 // set the overscroll listener. (applies to both OverScrollView and OverScrollListView)
-listView.setOverScrollListener(new OverScrollListView.OverScrolledListener() { // (applies to both)
+listView.setOverScrollListener(new OverScrollListView.OverScrolledListener() {
 @Override
 public void overScrolled(int scrollY, int maxY, boolean clampedY, boolean didFinishOverScroll) {
 
@@ -72,6 +73,14 @@ public void overScrolled(int scrollY, int maxY, boolean clampedY, boolean didFin
        // do someting
     }
 });
+```
+
+For the listner just make sure to use OverScrollView.OverScrolledListener if you are using the ScrollView
+
+```java
+scrollView.setOverScrollListener(new OverScrollView.OverScrolledListener() {
+...
+}
 ```
 
 
