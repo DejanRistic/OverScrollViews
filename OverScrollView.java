@@ -7,24 +7,22 @@
  * ----------------------------------------------------------------------------
  */
 
-package com.fuzzydev,widgets;
+package com.fuzzydev.widgets;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.widget.AbsListView;
 import android.widget.EdgeEffect;
-import android.widget.ListView;
 import android.widget.OverScroller;
+import android.widget.ScrollView;
 
 import java.lang.reflect.Field;
 
-;
 
 /**
- * Naive ListView subclass that allows you to change the over scroll value and hook
+ * Naive ScrollView subclass that allows you to change the over scroll value and hook
  * a listener that will tell you how far you have over scrolled. It also disables
  * the glow effect at the top edge. The disabling is done by reflection, so it may
  * at some point stop working if the field name changes, but a a global has been set
@@ -33,9 +31,9 @@ import java.lang.reflect.Field;
  * <p>
  * Created by Dejan Ristic on 1/5/15.
  */
-public class OverScrollListView extends ListView {
+public class OverScrollView extends ScrollView {
 
-    private static final String TAG = "OverScrollListView";
+    private static final String TAG = "OverScrolView";
 
     private static final String OVER_SCROLLER_FIELD = "mScroller"; // Variable to change if field changes.
     private static final String TOP_EDGE_EFFECT_FIELD = "mEdgeGlowTop"; // Variable to change if field changes.
@@ -56,17 +54,17 @@ public class OverScrollListView extends ListView {
         void overScrolled(int scrollY, int maxY, boolean exceededOffset, boolean didFinishOverScroll);
     }
 
-    public OverScrollListView(Context context) {
+    public OverScrollView(Context context) {
         super(context);
         init();
     }
 
-    public OverScrollListView(Context context, AttributeSet attrs) {
+    public OverScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public OverScrollListView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public OverScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -96,7 +94,7 @@ public class OverScrollListView extends ListView {
     }
 
     private EdgeEffect getTopEdgeEffect() throws NoSuchFieldException, IllegalAccessException {
-        Field f = AbsListView.class.getDeclaredField(TOP_EDGE_EFFECT_FIELD);
+        Field f = ScrollView.class.getDeclaredField(TOP_EDGE_EFFECT_FIELD);
         if (f != null) {
             f.setAccessible(true);
             return (EdgeEffect) f.get(this);
@@ -105,7 +103,7 @@ public class OverScrollListView extends ListView {
     }
 
     private OverScroller getOverScroller() throws NoSuchFieldException, IllegalAccessException {
-        Field f = AbsListView.class.getDeclaredField(OVER_SCROLLER_FIELD);
+        Field f = ScrollView.class.getDeclaredField(OVER_SCROLLER_FIELD);
         if (f != null) {
             f.setAccessible(true);
             return (OverScroller) f.get(this);
