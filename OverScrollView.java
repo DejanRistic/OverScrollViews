@@ -11,11 +11,11 @@ package com.fuzzydev.widgets;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.EdgeEffect;
-import android.widget.OverScroller;
 import android.widget.ScrollView;
 
 import java.lang.reflect.Field;
@@ -23,19 +23,18 @@ import java.lang.reflect.Field;
 
 /**
  * Naive ScrollView subclass that allows you to change the over scroll value and hook
- * a listener that will tell you how far you have over scrolled. It also disables
- * the glow effect at the top edge. The disabling is done by reflection, so it may
- * at some point stop working if the field name changes, but a a global has been set
- * for quick modification if need be.
+ * a listener that will tell you how far you have over scrolled. Added OverScrollHeader
+ * abillity to it. It also disables the glow effect at the top edge. The disabling is 
+ * done by reflection, so it may at some point stop working if the field name changes, 
+ * but a a global has been set for quick modification if need be.
  * <p>
  * <p>
  * Created by Dejan Ristic on 1/5/15.
  */
 public class OverScrollView extends ScrollView {
 
-    private static final String TAG = "OverScrolView";
+    private static final String TAG = "OverScrollListView";
 
-    private static final String OVER_SCROLLER_FIELD = "mScroller"; // Variable to change if field changes.
     private static final String TOP_EDGE_EFFECT_FIELD = "mEdgeGlowTop"; // Variable to change if field changes.
 
     private static final int DEFAULT_MAX_Y = 150;
@@ -44,10 +43,10 @@ public class OverScrollView extends ScrollView {
 
     private boolean didStartOverScroll = false;
     private boolean didFinishOverScroll = false;
+    private boolean isClamped;
 
+    private Drawable mHeaderDrawable;
     private EdgeEffect mTopEdgeEffect;
-    private OverScroller mScroller;
-
     private OverScrolledListener mListener;
 
     public interface OverScrolledListener {
@@ -69,12 +68,19 @@ public class OverScrollView extends ScrollView {
         init();
     }
 
+    public void setOverScrollHeader(Drawable drawable) {
+        mHeaderDrawable = drawable;
+    }
+
     public void setOverScrollListener(OverScrolledListener listener) {
         mListener = listener;
     }
 
     public void setOverScrollOffsetY(int offset) {
         mMaxOverScrollY = offset;
+        if (mHeaderDrawable != null) {
+            updateBounds();
+        }
     }
 
     private void init() {
@@ -86,7 +92,6 @@ public class OverScrollView extends ScrollView {
     private void getPrivateFieldMembers() {
         try {
             mTopEdgeEffect = getTopEdgeEffect();
-            mScroller = getOverScroller();
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
             Log.e(TAG, "The Reflection Failed! Check if the field name changed in AbsListView.java inside the AOSP!");
@@ -102,23 +107,39 @@ public class OverScrollView extends ScrollView {
         return null;
     }
 
-    private OverScroller getOverScroller() throws NoSuchFieldException, IllegalAccessException {
-        Field f = ScrollView.class.getDeclaredField(OVER_SCROLLER_FIELD);
-        if (f != null) {
-            f.setAccessible(true);
-            return (OverScroller) f.get(this);
-        }
-        return null;
+    private void reset() {
+        smoothScrollTo(0, 0);
+        didFinishOverScroll = true;
+        didStartOverScroll = false;
+        mListener.overScrolled(0, mMaxOverScrollY, false, true);
+    }
+
+    private void updateBounds() {
+        mHeaderDrawable.setBounds(0, -mMaxOverScrollY, getRight(), 0);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        updateBounds();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (didStartOverScroll && ev.getAction() == MotionEvent.ACTION_UP) {
-            if (mScroller != null) {
-                mScroller.springBack(0, mScroller.getStartY(), 0, 0, 0, mMaxOverScrollY);
-            }
+
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_UP:
+                if (didStartOverScroll) {
+                    if (isClamped) {
+                        reset();
+                        return true;
+                    }
+                }
+                break;
         }
+
         return super.onTouchEvent(ev);
+
     }
 
     @Override
@@ -129,6 +150,9 @@ public class OverScrollView extends ScrollView {
     @Override
     protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
         super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
+
+        isClamped = clampedY;
+
         if (scrollY < 0 && !didStartOverScroll) {
             didStartOverScroll = true;
             didFinishOverScroll = false;
@@ -151,6 +175,9 @@ public class OverScrollView extends ScrollView {
         super.onDraw(canvas);
         if (mTopEdgeEffect != null) {
             mTopEdgeEffect.finish();
+            if (mHeaderDrawable != null) {
+                mHeaderDrawable.draw(canvas);
+            }
         }
     }
 }
