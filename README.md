@@ -30,14 +30,28 @@ listView.setOverScrollOffsetY(150); // default is also 150.
 listView.setOverscrollHeader(myDrawable); // set a drawable to be shown in the scroll offset area.
 listView.setOverScrollListener(new OverScrollListView.OverScrolledListener() {
 @Override
-public void overScrolled(int scrollY, int maxY) {
-    if (scrollY > (maxY/2)) { // you are half way to full offset.
-        // Do something
-    } else if(scrollY == maxY) { // you are at full offset.
-        // Do Something
-    }else{  // default state.
-        // Do Something
+public void overScrolled(int scrollY, int maxY, boolean exceededOffset, boolean didFinishOverScroll) {
+
+    // You can check the offset value and do as you please
+    if(scrollY < (maxY/2)) { // you are half way to full offset.
+        // do something
+    }else if(scrollY == maxY) { // you are at full offset.
+        // do Something
+    }else{  // anything below half offset.
+        // do Something
     } 
+    
+    // You can check if they are exceeding the offset. Still pulling down after full offset.
+    if(exceededOffset){
+        // do something
+    }
+    
+    // You can check if the view is back to 0 offset after its been pulled.
+    // This will currently be true if you swipe it back or let it go and let
+    // the view bounce.
+    if(didFinishOverScroll){
+       // do someting
+    }
 });
 ```
 
