@@ -5,7 +5,10 @@ Simple ListView/ScrollView subclasses that allow you to set the over scroll max 
 
 To use just grab the OverScrollListView.java or OverScrollView.java file and add it to your project. Its not big enough to throw up on maven central.
 
-You can add either of the views to your xml file or set it up in code like any other widget.
+OverScrollListView
+==================
+
+Define it in your xml, or create from code.
 
 ```xml
 <com.yourpackage.widgets.OverScrollListView
@@ -13,58 +16,27 @@ You can add either of the views to your xml file or set it up in code like any o
     android:background="@color/default_light_grey"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
-    
-<com.yourpackage.widgets.OverScrollView
-    android:id="@+id/over_scroll_view"
-    android:background="@color/default_light_grey"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <<!--  Your root scrollview group  -->
-</com.yourpackage.widgets.OverScrollView
 ```
 
-Then grab a reference to it in your Activity/Fragment.
+Grab a reference to it in your Activity/Fragment.
 
 ```java
 @InjectView(R.id.over_scroll_list) // ButterKnife
 OverScrollListView listView;
-
-@InjectView(R.id.over_scroll_view) // ButterKnife
-OverScrollView scrollView;
 ```
 
-Initialize like any other list/scroll view, the following are examples of what they can do.
+Set the height of the overscroll area.
 
 ```java
 listView.setOverScrollOffsetY(200); // default is 150.  
-scrollView.setOverScrollOffsetY(200); // default is 150.  
 ```
-
-The ScrollView currently supports adding a custom view as the overscroll area. 
+Set a drawable for the overscroll area. Differnce from norm is that we disable the EdgeEffect.
 ```java
-
-// ScrollView only, allows you to set a custom view for the over scroll area.
-TextView textView = new TextView(this);
-textView.setText("Hello World");
-textView.setTextSize(14);
-textView.setGravity(Gravity.CENTER);
-textView.setBackgroundColor(Color.YELLOW);
-
-scrollView.setOverscrollView(textView);
-```
-
-Both support the ability to add a drawable for the over scroll area.
-
-```java
-// set a drawable to be shown in the scroll offset area. 
 listView.setOverscrollHeader(myDrawable);
-scrollView.setOverscrollHeader(myDrawable);
 ```
-
-Both support an OverScrolledListener that will notify you of the scroll offset and such.
+Attach a listener that gives you the current status of the overscroll. 
+The scrollY will always be between 0 and maxY (which is configurable through setOverScrollOffsetY(int n) ) 
 ```java
-
-// set the overscroll listener. (applies to both OverScrollView and OverScrollListView)
 listView.setOverScrollListener(new OverScrollListView.OverScrolledListener() {
 @Override
 public void overScrolled(int scrollY, int maxY, boolean clampedY, boolean didFinishOverScroll) {
@@ -92,12 +64,68 @@ public void overScrolled(int scrollY, int maxY, boolean clampedY, boolean didFin
 });
 ```
 
-Listener is the same for the ScrollView, we just apply the OverScrollView.OverScrolledListener() instead.
+OverScrollView
+==================
+
+The ScrollView works for both top and bottom overscroll events.
+
+Define it in your xml, or create from code.
+```xml
+<com.yourpackage.widgets.OverScrollView
+    android:id="@+id/over_scroll_view"
+    android:background="@color/default_light_grey"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <<!--  Your root scrollview group  -->
+</com.yourpackage.widgets.OverScrollView
+```
+
+Grab a reference to it in your Activity/Fragment.
+```java
+@InjectView(R.id.over_scroll_view) // ButterKnife
+OverScrollView scrollView;
+```
+
+Set the height of the overscroll area.
+```java
+scrollView.setOverScrollOffsetY(200); // default is 150.  
+```
+The ScrollView is a bit more advanced and currently supports adding a custom view as the overscroll area.
+This works for both top and bottom overscroll areas.
 
 ```java
-scrollView.setOverScrollListener(new OverScrollView.OverScrolledListener() {
-...
+TextView textView = new TextView(this);
+textView.setText("Hello World");
+textView.setTextSize(14);
+textView.setGravity(Gravity.CENTER);
+textView.setBackgroundColor(Color.YELLOW);
+
+scrollView.setOverscrollHeaderView(textView);
+scrollView.setOverscrollFooterView(textView);
+```
+
+If you're not into views, you can also use a drawable.
+```java
+// set a drawable to be shown in the scroll offset area. 
+scrollView.setOverscrollHeader(myDrawable);
+scrollView.setOverscrollFooter(myDrawable);
+```
+
+Same listener as the ListView but the ScrollView listener has events for both top overscroll and bottom overscroll.
+
+The scrollY will always be between 0 and maxY (which is configurable through setOverScrollOffsetY(int n) ) 
+```java
+
+// set the overscroll listener. (applies to both OverScrollView and OverScrollListView)
+listView.setOverScrollListener(new OverScrollView.OverScrolledListener() {
+@Override
+public void overScrolledTop(int scrollY, int maxY, boolean clampedY, boolean didFinishOverScroll) {
+    // handle overscroll (see ListView example for details)
 }
+@Override
+public void overScrolledBottom(int scrollY, int maxY, boolean clampedY, boolean didFinishOverScroll) {
+    // handle overscroll (see ListView example for details)
+});
 ```
 
 
