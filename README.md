@@ -32,7 +32,7 @@ listView.setOverScrollListener(new OverScrollListView.OverScrolledListener() {
 @Override
 public void overScrolled(int scrollY, int maxY, boolean exceededOffset, boolean didFinishOverScroll) {
 
-    // You can check the scrollY value and use it however you need. (0 - yMax)
+    // You can check the scrollY value and use it however you need. (0-maxY)
     if(scrollY < (maxY/2)) { // you are half way to full offset.
         // do something
     }else if(scrollY == maxY) { // you are at full offset.
