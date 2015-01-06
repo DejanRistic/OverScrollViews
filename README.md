@@ -1,7 +1,7 @@
 OverScrollViews
 ==================
 
-Simple ListView/Scroll subclasses that allow you to set the over scroll max and hook a listener to see how far you have over scrolled.
+Simple ListView/ScrollView subclasses that allow you to set the over scroll max and hook a listener to see how far you have over scrolled.
 
 To use just grab the OverScrollListView.java or OverScrollView.java file and add it to your project. Its not big enough to throw up on maven central.
 
