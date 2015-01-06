@@ -5,7 +5,7 @@ Simple ListView/ScrollView subclasses that allow you to set the over scroll max 
 
 To use just grab the OverScrollListView.java or OverScrollView.java file and add it to your project. Its not big enough to throw up on maven central.
 
-You can add the either of the views to your xml file or set it up in code like any other widget.
+You can add either of the views to your xml file or set it up in code like any other widget.
 
 ```xml
 <com.yourpackage.widgets.OverScrollListView
