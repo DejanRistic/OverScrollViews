@@ -104,7 +104,7 @@ public class OverScrollListView extends ListView {
     @Override
     protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
         super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
-        if (scrollY < 0) {
+        if (scrollY < 0 && !didStartOverScroll) {
             didStartOverScroll = true;
             didFinishOverScroll = false;
         }
