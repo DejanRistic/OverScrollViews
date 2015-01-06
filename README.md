@@ -38,11 +38,16 @@ Initialize like any other list, the only extra step is to add the Offset listene
 ```java
 listView.setAdapter(myAwesomeAdapter); // ListView only
 
-listView.setOverScrollOffsetY(150); // default is also 150. (applies to both)
-listView.setOverscrollHeader(myDrawable); // set a drawable to be shown in the scroll offset area. (applies to both)
+// default is also 150. (applies to both OverScrollView and OverScrollListView)
+listView.setOverScrollOffsetY(150); 
+
+// set a drawable to be shown in the scroll offset area. (applies to both OverScrollView and OverScrollListView)
+listView.setOverscrollHeader(myDrawable);
+
+// set the overscroll listener. (applies to both OverScrollView and OverScrollListView)
 listView.setOverScrollListener(new OverScrollListView.OverScrolledListener() { // (applies to both)
 @Override
-public void overScrolled(int scrollY, int maxY, boolean exceededOffset, boolean didFinishOverScroll) {
+public void overScrolled(int scrollY, int maxY, boolean clampedY, boolean didFinishOverScroll) {
 
     // You can check the scrollY value and use it however you need. (0-maxY)
     if(scrollY < (maxY/2)) { // you are half way to full offset.
@@ -53,8 +58,8 @@ public void overScrolled(int scrollY, int maxY, boolean exceededOffset, boolean 
         // do Something
     } 
     
-    // You can check if they are exceeding the offset. Still pulling down after full offset.
-    if(exceededOffset){
+    // Still pulling down after full offset. Value satying at maxY.
+    if(clampedY){
         // do something
     }
     
