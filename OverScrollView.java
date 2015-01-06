@@ -68,7 +68,7 @@ public class OverScrollView extends ScrollView {
         init();
     }
 
-    public void setOverScrollHeader(Drawable drawable) {
+    public void setOverscrollHeader(Drawable drawable) {
         mHeaderDrawable = drawable;
     }
 
