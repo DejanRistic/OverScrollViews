@@ -36,10 +36,12 @@ OverScrollView scrollView;
 Initialize like any other list, the only extra step is to add the Offset listener (optional). 
 
 ```java
-listView.setAdapter(myAwesomeAdapter); // ListView only
 
-// default is also 150. (applies to both OverScrollView and OverScrollListView)
-listView.setOverScrollOffsetY(150); 
+// ListView only
+listView.setAdapter(myAwesomeAdapter);
+
+// (applies to both OverScrollView and OverScrollListView)
+listView.setOverScrollOffsetY(200); // default is 150.  
 
 // set a drawable to be shown in the scroll offset area. (applies to both OverScrollView and OverScrollListView)
 listView.setOverscrollHeader(myDrawable);
