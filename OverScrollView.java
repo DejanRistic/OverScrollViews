@@ -11,10 +11,12 @@ package com.fuzzydev.widgets;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.EdgeEffect;
 import android.widget.ScrollView;
 
@@ -23,10 +25,10 @@ import java.lang.reflect.Field;
 
 /**
  * Naive ScrollView subclass that allows you to change the over scroll value and hook
- * a listener that will tell you how far you have over scrolled. Added OverScrollHeader
- * abillity to it. It also disables the glow effect at the top edge. The disabling is 
- * done by reflection, so it may at some point stop working if the field name changes, 
- * but a a global has been set for quick modification if need be.
+ * a listener that will tell you how far you have over scrolled. It also disables
+ * the glow effect at the top edge. The disabling is done by reflection, so it may
+ * at some point stop working if the field name changes, but a a global has been set
+ * for quick modification if need be.
  * <p>
  * <p>
  * Created by Dejan Ristic on 1/5/15.
@@ -45,12 +47,14 @@ public class OverScrollView extends ScrollView {
     private boolean didFinishOverScroll = false;
     private boolean isClamped;
 
+    private View mView;
+    private Rect mViewRect;
     private Drawable mHeaderDrawable;
     private EdgeEffect mTopEdgeEffect;
     private OverScrolledListener mListener;
 
     public interface OverScrolledListener {
-        void overScrolled(int scrollY, int maxY, boolean exceededOffset, boolean didFinishOverScroll);
+        void overScrolled(int scrollY, int maxY, boolean clampedY, boolean didFinishOverScroll);
     }
 
     public OverScrollView(Context context) {
@@ -78,9 +82,12 @@ public class OverScrollView extends ScrollView {
 
     public void setOverScrollOffsetY(int offset) {
         mMaxOverScrollY = offset;
-        if (mHeaderDrawable != null) {
-            updateBounds();
-        }
+        updateBounds();
+        updateCustomView();
+    }
+
+    public void setOverscrollView(View view) {
+        mView = view;
     }
 
     private void init() {
@@ -120,10 +127,24 @@ public class OverScrollView extends ScrollView {
         }
     }
 
+    private void updateCustomView() {
+        if (mView != null) {
+            mViewRect = new Rect();
+            mViewRect.set(0, -mMaxOverScrollY, getRight(), 0);
+
+            int widthSpec = View.MeasureSpec.makeMeasureSpec(mViewRect.width(), View.MeasureSpec.EXACTLY);
+            int heightSpec = View.MeasureSpec.makeMeasureSpec(mViewRect.height(), View.MeasureSpec.EXACTLY);
+            mView.measure(widthSpec, heightSpec);
+
+            mView.layout(0, 0, mViewRect.width(), mViewRect.height());
+        }
+    }
+
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
         updateBounds();
+        updateCustomView();
     }
 
     @Override
@@ -179,6 +200,12 @@ public class OverScrollView extends ScrollView {
             mTopEdgeEffect.finish();
             if (mHeaderDrawable != null) {
                 mHeaderDrawable.draw(canvas);
+            }
+            if (mView != null && mViewRect != null) {
+                canvas.save();
+                canvas.translate(mViewRect.left, mViewRect.top);
+                mView.draw(canvas);
+                canvas.restore();
             }
         }
     }
