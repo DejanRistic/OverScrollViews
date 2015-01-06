@@ -33,7 +33,7 @@ OverScrollListView listView;
 OverScrollView scrollView;
 ```
 
-Initialize like any other list, the only extra step is to add the Offset listener (optional). 
+Initialize like any other list/scroll view, the only extra step is to add the offset listener (optional). 
 The example is for the ListView but everything but the adapter can be applied to both.
 
 ```java
