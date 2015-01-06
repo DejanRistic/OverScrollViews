@@ -32,18 +32,21 @@ import java.lang.reflect.Field;
 public class OverScrollListView extends ListView {
 
     private static final String TAG = "OverScrollListView";
-    private static final String TOP_EDGE_EFFECT_FIELD = "mEdgeGlowTop";
+    private static final String TOP_EDGE_EFFECT_FIELD = "mEdgeGlowTop"; // Variable to chage if field changes.
 
     private static final int DEFAULT_MAX_Y = 150;
 
     private int mMaxOverScrollY = DEFAULT_MAX_Y;
+
+    private boolean didStartOverScroll = false;
+    private boolean didFinishOverScroll = false;
 
     private EdgeEffect mTopEdgeEffect;
 
     private OverScrolledListener mListener;
 
     public interface OverScrolledListener {
-        void overScrolled(int scrollY, int maxY);
+        void overScrolled(int scrollY, int maxY, boolean exceededOffset, boolean didFinishOverScroll);
     }
 
     public OverScrollListView(Context context) {
@@ -65,11 +68,9 @@ public class OverScrollListView extends ListView {
         mListener = listener;
     }
 
-
     public void setOverScrollOffsetY(int offset) {
         mMaxOverScrollY = offset;
     }
-
 
     private void init() {
         setFadingEdgeLength(0);
@@ -82,21 +83,18 @@ public class OverScrollListView extends ListView {
             mTopEdgeEffect = getTopEdgeEffect();
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
+            Log.v(TAG, "The Reflection Failed! Check if the field name changed in AbsListView.java inside the AOSP!");
         }
     }
 
-
     private EdgeEffect getTopEdgeEffect() throws NoSuchFieldException, IllegalAccessException {
-
         Field f = AbsListView.class.getDeclaredField(TOP_EDGE_EFFECT_FIELD);
-
         if (f != null) {
             f.setAccessible(true);
             return (EdgeEffect) f.get(this);
         }
         return null;
     }
-
 
     @Override
     protected boolean overScrollBy(int deltaX, int deltaY, int scrollX, int scrollY, int scrollRangeX, int scrollRangeY, int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
@@ -106,8 +104,18 @@ public class OverScrollListView extends ListView {
     @Override
     protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
         super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
+        if (scrollY < 0) {
+            didStartOverScroll = true;
+            didFinishOverScroll = false;
+        }
+
+        if (scrollY == 0 && didStartOverScroll) {
+            didStartOverScroll = false;
+            didFinishOverScroll = true;
+        }
+
         if (mListener != null) {
-            mListener.overScrolled(Math.abs(scrollY), mMaxOverScrollY);
+            mListener.overScrolled(Math.abs(scrollY), mMaxOverScrollY, clampedY, didFinishOverScroll);
         } else {
             Log.v(TAG, "No scroll listener set");
         }
