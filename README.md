@@ -117,7 +117,7 @@ The scrollY will always be between 0 and maxY (which is configurable through set
 ```java
 
 // set the overscroll listener. (applies to both OverScrollView and OverScrollListView)
-listView.setOverScrollListener(new OverScrollView.OverScrolledListener() {
+scrollView.setOverScrollListener(new OverScrollView.OverScrolledListener() {
 @Override
 public void overScrolledTop(int scrollY, int maxY, boolean clampedY, boolean didFinishOverScroll) {
     // handle overscroll (see ListView example for details)
