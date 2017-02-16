@@ -21,7 +21,7 @@ Define it in your xml, or create from code.
 Grab a reference to it in your Activity/Fragment.
 
 ```java
-@InjectView(R.id.over_scroll_list) // ButterKnife
+@BindView(R.id.over_scroll_list) // ButterKnife
 OverScrollListView listView;
 ```
 
