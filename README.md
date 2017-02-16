@@ -76,13 +76,13 @@ Define it in your xml, or create from code.
     android:background="@color/default_light_grey"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <<!--  Your root scrollview group  -->
+    <!--  Your root scrollview group  -->
 </com.yourpackage.widgets.OverScrollView
 ```
 
 Grab a reference to it in your Activity/Fragment.
 ```java
-@InjectView(R.id.over_scroll_view) // ButterKnife
+@BindView(R.id.over_scroll_view) // ButterKnife
 OverScrollView scrollView;
 ```
 
